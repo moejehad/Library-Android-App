@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.add.AddBookFragment">
+
+    <TextView
+        android:id="@+id/AddBookTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_book"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:textSize="22sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/AddBookTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/editTextTextBookName"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/input_background"
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"
+            android:ems="10"
+            android:inputType="text"
+            android:hint="@string/book_name" />
+
+        <EditText
+            android:id="@+id/editTextTextBookAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/input_background"
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"
+            android:ems="10"
+            android:inputType="text"
+            android:hint="@string/book_author" />
+
+        <TextView
+            android:id="@+id/LaunchYear"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/input_background"
+            android:layout_marginBottom="15dp"
+            android:textSize="18sp"
+            android:paddingVertical="15dp"
+            android:paddingHorizontal="10dp"
+            android:inputType="date"
+            android:hint="@string/launch_year" />
+
+        <EditText
+            android:id="@+id/editTextTextPrice"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/input_background"
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"
+            android:ems="10"
+            android:inputType="number"
+            android:hint="@string/price" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:numStars="5"
+            android:rating="2.5"
+            android:stepSize="0.5"
+            android:isIndicator="false"
+            android:max="5"
+            android:secondaryProgressTint="@color/white"
+            android:progressTint="@color/yellow_500"
+            android:progressBackgroundTint="@color/gray"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"/>
+
+        <Button
+            android:id="@+id/AddBookBtn"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/add_book" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
