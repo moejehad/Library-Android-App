@@ -1,7 +1,11 @@
 package com.example.library.ui.add
 
+import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
+import android.app.ProgressDialog
 import android.app.TimePickerDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.TimePicker
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.library.R
@@ -23,8 +30,13 @@ import com.example.mylibrary.utils.Constant.EMPTY_RATING
 import com.example.mylibrary.utils.Constant.EMPTY_YEAR
 import com.example.mylibrary.utils.Constant.ERROR
 import com.example.mylibrary.utils.Constant.ERROR_MSG
+import com.example.mylibrary.utils.Constant.STORAGE_FOLDER
+import com.example.mylibrary.utils.Constant.UPLOAD_IMAGE
 import com.example.mylibrary.utils.toastMessgae
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_add_book.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -36,17 +48,26 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book), DatePickerDialog.O
 
     private var _binding: FragmentAddBookBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var mNavController: NavController
     private lateinit var db: FirebaseFirestore
-
     var date: String? = null
+    lateinit var storge: FirebaseStorage
+    lateinit var reference: StorageReference
+    lateinit var progressDialog: ProgressDialog
+    var path: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         mNavController = findNavController()
         db = FirebaseFirestore.getInstance()
+
+        storge = FirebaseStorage.getInstance()
+        reference = storge!!.reference
+
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setMessage(UPLOAD_IMAGE)
+        progressDialog.setCancelable(false)
 
     }
 
@@ -62,11 +83,39 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book), DatePickerDialog.O
 
         binding.AddBookBtn.setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
-                addBookToFirebase()
+                addBookToFirebase(path)
             }
         }
 
+        binding.BookImage.setOnClickListener {
+            pickImageGallery()
+        }
+
         return binding.root
+    }
+
+    val getImage = registerForActivityResult(
+        ActivityResultContracts.GetContent(),
+        ActivityResultCallback {
+            binding.BookImage.setImageURI(it)
+            uploadImage(it)
+        }
+    )
+    private fun pickImageGallery() {
+        getImage.launch("image/*")
+    }
+
+    private fun uploadImage(uri: Uri?) {
+        progressDialog.show()
+        reference.child(STORAGE_FOLDER + UUID.randomUUID().toString()).putFile(uri!!)
+            .addOnSuccessListener { taskSnapshot ->
+                taskSnapshot.storage.downloadUrl.addOnSuccessListener { uri ->
+                    path = uri.toString()
+                }
+                progressDialog.dismiss()
+            }.addOnFailureListener { exception ->
+                progressDialog.dismiss()
+            }
     }
 
     private fun pickDate() {
@@ -83,7 +132,7 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book), DatePickerDialog.O
         LaunchYear.text = date
     }
 
-    private fun addBookToFirebase() {
+    private fun addBookToFirebase(imagePath : String) {
         var bookName = editTextTextBookName.text
         var bookAuthor = editTextTextBookAuthor.text
         var bookYear = date
@@ -107,7 +156,8 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book), DatePickerDialog.O
                 bookAuthor.toString(),
                 bookYear.toString(),
                 bookRating,
-                bookPrice.toString()
+                bookPrice.toString(),
+                imagePath
             )
 
             try {

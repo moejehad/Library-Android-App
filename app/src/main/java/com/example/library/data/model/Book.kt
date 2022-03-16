@@ -9,5 +9,6 @@ class Book(
     var bookAuthor: String = "",
     var bookYear: String = "",
     var bookRating: String = "",
-    var bookPrice:String = ""
+    var bookPrice:String = "",
+    var bookImage : String = ""
 ) : Parcelable

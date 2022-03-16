@@ -54,8 +54,15 @@ dependencies {
     //coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC'
 
-
+    //firebase
     implementation platform('com.google.firebase:firebase-bom:29.0.0')
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.firebaseui:firebase-ui-firestore:8.0.0'
+    implementation 'com.google.firebase:firebase-storage:20.0.0'
+
+    //circleimageview
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
 }

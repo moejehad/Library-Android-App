@@ -2,11 +2,13 @@ package com.example.mylibrary.data.adapter
 
 import android.app.Activity
 import android.app.DownloadManager
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.library.R
 import com.example.mylibrary.data.model.Book
 import com.example.mylibrary.utils.Constant.BOOK_YEAR
@@ -18,14 +20,14 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.book_item.view.*
 
-class BookAdapter(val onClick : OnClickItem) {
+class BookAdapter(val onClick: OnClickItem) {
 
     var db = Firebase.firestore
     var BookAdap: FirestoreRecyclerAdapter<Book, MyViewHolder>? = null
     lateinit var options: FirestoreRecyclerOptions<Book>
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val bookNumber = itemView.bookNumber
+        val bookImage = itemView.bookImage
         val bookName = itemView.bookName
         val bookAuthor = itemView.bookAuthor
         val bookYear = itemView.bookYear
@@ -36,7 +38,7 @@ class BookAdapter(val onClick : OnClickItem) {
     }
 
     fun getBooks() {
-        val query = db!!.collection(COLLECTION_NAME).orderBy(BOOK_YEAR,Query.Direction.ASCENDING)
+        val query = db!!.collection(COLLECTION_NAME).orderBy(BOOK_YEAR, Query.Direction.ASCENDING)
         options = FirestoreRecyclerOptions.Builder<Book>().setQuery(query, Book::class.java).build()
 
         BookAdap = object : FirestoreRecyclerAdapter<Book, MyViewHolder>(options) {
@@ -48,12 +50,13 @@ class BookAdapter(val onClick : OnClickItem) {
             }
 
             override fun onBindViewHolder(holder: MyViewHolder, position: Int, model: Book) {
-                holder.bookNumber.text = (position+1).toString()
+                Glide.with(holder.itemView).load(model.bookImage).placeholder(R.drawable.ic_upload)
+                    .into(holder.bookImage)
                 holder.bookName.text = model.bookName
                 holder.bookAuthor.text = model.bookAuthor
                 holder.bookYear.text = model.bookYear
                 holder.bookRating.rating = model.bookRating.toFloat()
-                holder.bookPrice.text = "$ "+model.bookPrice
+                holder.bookPrice.text = "$ " + model.bookPrice
                 holder.ratingNumber.text = model.bookRating
                 holder.editBtn.setOnClickListener {
                     onClick.onClick(model)
@@ -64,7 +67,7 @@ class BookAdapter(val onClick : OnClickItem) {
     }
 
     interface OnClickItem {
-        fun onClick(book:Book)
+        fun onClick(book: Book)
     }
 
 }

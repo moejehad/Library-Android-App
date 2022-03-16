@@ -19,4 +19,8 @@ object Constant {
     const val EMPTY_YEAR = "Enter Book Launch Year Please"
     const val EMPTY_PRICE = "Enter Book Price Please"
     const val EMPTY_RATING = "Enter Book Rating Please"
+
+    const val UPLOAD_IMAGE = "Upload Photo ..."
+
+    const val STORAGE_FOLDER = "Books/"
 }

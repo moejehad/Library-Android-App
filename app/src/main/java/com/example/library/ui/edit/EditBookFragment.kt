@@ -1,6 +1,8 @@
 package com.example.library.ui.edit
 
 import android.app.DatePickerDialog
+import android.app.ProgressDialog
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,11 +10,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.library.R
 import com.example.library.databinding.FragmentEditBookBinding
 import com.example.mylibrary.data.model.Book
+import com.example.mylibrary.utils.Constant
 import com.example.mylibrary.utils.Constant.BOOK_AUTHOR
 import com.example.mylibrary.utils.Constant.BOOK_DATA
 import com.example.mylibrary.utils.Constant.BOOK_NAME
@@ -20,9 +26,12 @@ import com.example.mylibrary.utils.Constant.COLLECTION_NAME
 import com.example.mylibrary.utils.Constant.DELETED
 import com.example.mylibrary.utils.Constant.ERROR
 import com.example.mylibrary.utils.Constant.ERROR_MSG
+import com.example.mylibrary.utils.Constant.STORAGE_FOLDER
 import com.example.mylibrary.utils.Constant.UPDATE
 import com.example.mylibrary.utils.toastMessgae
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_add_book.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -35,7 +44,11 @@ class EditBookFragment : Fragment(R.layout.fragment_edit_book), DatePickerDialog
     private lateinit var mNavController: NavController
     private lateinit var db: FirebaseFirestore
     private lateinit var book: Book
+    lateinit var storge: FirebaseStorage
+    lateinit var reference: StorageReference
     var date: String? = null
+    var path: String = ""
+    lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +56,13 @@ class EditBookFragment : Fragment(R.layout.fragment_edit_book), DatePickerDialog
         mNavController = findNavController()
         db = FirebaseFirestore.getInstance()
         book = arguments?.getParcelable<Book>(BOOK_DATA)!!
+
+        storge = FirebaseStorage.getInstance()
+        reference = storge!!.reference
+
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setMessage(Constant.UPLOAD_IMAGE)
+        progressDialog.setCancelable(false)
 
     }
 
@@ -57,14 +77,24 @@ class EditBookFragment : Fragment(R.layout.fragment_edit_book), DatePickerDialog
         binding.LaunchYear.setText(book.bookYear)
         binding.editTextTextPrice.setText(book.bookPrice)
         binding.ratingBar.rating = book.bookRating.toFloat()
+        Glide.with(requireParentFragment()).load(book.bookImage).placeholder(R.drawable.ic_upload)
+            .into(binding.EditBookImage)
 
         binding.LaunchYear.setOnClickListener {
             pickDate()
         }
 
+        binding.EditBookImage.setOnClickListener {
+            editBookImage()
+        }
+
         binding.EditBookBtn.setOnClickListener {
             GlobalScope.launch {
-                EditBookFromFirestore()
+                if (path.isNotEmpty()){
+                    EditBookFromFirestore(path)
+                }else {
+                    EditBookFromFirestore(book.bookImage)
+                }
             }
         }
 
@@ -75,6 +105,31 @@ class EditBookFragment : Fragment(R.layout.fragment_edit_book), DatePickerDialog
         }
 
         return binding.root
+    }
+
+    val getImage = registerForActivityResult(
+        ActivityResultContracts.GetContent(),
+        ActivityResultCallback {
+            binding.EditBookImage.setImageURI(it)
+            uploadImage(it)
+        }
+    )
+
+    private fun uploadImage(it: Uri?) {
+        progressDialog.show()
+        reference.child(STORAGE_FOLDER + UUID.randomUUID().toString()).putFile(it!!)
+            .addOnSuccessListener { taskSnapshot ->
+                taskSnapshot.storage.downloadUrl.addOnSuccessListener { uri ->
+                    path = uri.toString()
+                }
+                progressDialog.dismiss()
+            }.addOnFailureListener { exception ->
+                progressDialog.dismiss()
+            }
+    }
+
+    private fun editBookImage() {
+        getImage.launch("image/*")
     }
 
     private fun pickDate() {
@@ -91,7 +146,7 @@ class EditBookFragment : Fragment(R.layout.fragment_edit_book), DatePickerDialog
         LaunchYear.text = date
     }
 
-    private fun EditBookFromFirestore() {
+    private fun EditBookFromFirestore(newPath:String) {
         var editBookName = editTextTextBookName.text
         var editBookAuthor = editTextTextBookAuthor.text
         var editBookYear = LaunchYear.text
@@ -105,9 +160,10 @@ class EditBookFragment : Fragment(R.layout.fragment_edit_book), DatePickerDialog
             val EditBook = Book(
                 editBookName.toString(),
                 editBookAuthor.toString(),
-                editBookPrice.toString(),
+                editBookYear.toString(),
                 editBookRating,
-                editBookPrice.toString()
+                editBookPrice.toString(),
+                newPath
             )
 
             try {
