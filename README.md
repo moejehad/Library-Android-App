@@ -1,5 +1,5 @@
-# simple-library-android
-simple library using android studio ( kotlin ) and firestore
+# Library Android Application
+simple library using android studio ( kotlin ) and Firebase
 
 Use the following features in the application
 * Firebase firestore
