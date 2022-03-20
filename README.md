@@ -5,7 +5,8 @@ Use the following features in the application
 * Firebase firestore
 * Firebase storage
 * firebase ui
-* navigation graph
+* navigation component
+* single activity
 * coroutines
 * glide
 * circle image view
