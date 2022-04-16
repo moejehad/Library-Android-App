@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.edit.EditBookFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/EditBookTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/edit_book"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="30dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/EditBookTextView">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/EditBookImage"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:src="@drawable/ic_upload" />
+
+            <EditText
+                android:id="@+id/editTextTextBookName"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/input_background"
+                android:ems="10"
+                android:inputType="text"
+                android:padding="10dp"
+                android:text="@string/book_name" />
+
+            <EditText
+                android:id="@+id/editTextTextBookAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/input_background"
+                android:ems="10"
+                android:inputType="text"
+                android:padding="10dp"
+                android:text="@string/book_author" />
+
+            <TextView
+                android:id="@+id/LaunchYear"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/input_background"
+                android:inputType="date"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="15dp"
+                android:text="@string/launch_year"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/editTextTextPrice"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/input_background"
+                android:ems="10"
+                android:inputType="number"
+                android:padding="10dp"
+                android:text="@string/price" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:isIndicator="false"
+                android:max="5"
+                android:numStars="5"
+                android:progressBackgroundTint="@color/gray"
+                android:progressTint="@color/yellow_500"
+                android:rating="2.5"
+                android:secondaryProgressTint="@color/white"
+                android:stepSize="0.5" />
+
+            <Button
+                android:id="@+id/EditBookBtn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="@string/edit_book" />
+
+            <Button
+                android:id="@+id/DeleteBookBtn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:backgroundTint="@android:color/holo_red_light"
+                android:text="@string/delete_book" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

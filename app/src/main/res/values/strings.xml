@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">My Library</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_book">Add Book</string>
+    <string name="book_name">Book name</string>
+    <string name="book_author">Book author</string>
+    <string name="launch_year">Launch year</string>
+    <string name="price">price</string>
+    <string name="number">1</string>
+    <string name="year">1988</string>
+    <string name="edit">Edit</string>
+    <string name="book_price">$ 50.00</string>
+    <string name="edit_book">Edit Book</string>
+    <string name="delete_book">Delete Book</string>
+</resources>
