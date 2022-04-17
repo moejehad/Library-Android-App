@@ -33,10 +33,12 @@ import com.example.mylibrary.utils.Constant.ERROR_MSG
 import com.example.mylibrary.utils.Constant.STORAGE_FOLDER
 import com.example.mylibrary.utils.Constant.UPLOAD_IMAGE
 import com.example.mylibrary.utils.toastMessgae
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_add_book.*
@@ -63,15 +65,14 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book), DatePickerDialog.O
 
         database = FirebaseDatabase.getInstance()
             .getReferenceFromUrl("https://my-library-d6912-default-rtdb.firebaseio.com/Books")
-
-        mNavController = findNavController()
-
         storge = FirebaseStorage.getInstance()
         reference = storge!!.reference
 
         progressDialog = ProgressDialog(requireContext())
         progressDialog.setMessage(UPLOAD_IMAGE)
         progressDialog.setCancelable(false)
+
+        mNavController = findNavController()
 
     }
 
@@ -94,6 +95,15 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book), DatePickerDialog.O
         binding.BookImage.setOnClickListener {
             pickImageGallery()
         }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(COLLECTION_NAME, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            val token = task.result
+            Log.w(COLLECTION_NAME,token)
+        })
 
         return binding.root
     }
