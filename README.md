@@ -3,8 +3,10 @@ simple library using android studio ( kotlin ) and Firebase
 
 Use the following features in the application
 * Firebase firestore
+* Firebase Realtime Database
 * Firebase storage
 * firebase ui
+* ExoPlayer
 * navigation component
 * single activity
 * coroutines
